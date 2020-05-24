@@ -64,7 +64,7 @@ jobs:
     - name: Multi Arch manifest
       run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled 
-          echo ${{ secrets.DOCKER_USERNAME }} | docker login -u ${{ secrets.DOCKER_PASSWORD }} --password-stdin
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
           docker manifest create moztr/tc4400_exporter:${{ github.sha }} moztr/tc4400_exporter:${{ github.sha }}-amd64 moztr/tc4400_exporter:${{ github.sha }}-arm64v8 moztr/tc4400_exporter:${{ github.sha }}-arm32
           docker manifest annotate moztr/tc4400_exporter:${{ github.sha }} moztr/tc4400_exporter:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
           docker manifest annotate moztr/tc4400_exporter:${{ github.sha }} moztr/tc4400_exporter:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
