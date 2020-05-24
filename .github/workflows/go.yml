@@ -23,7 +23,8 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build
-      run: go build -v .
+    # Build statically linked so we can use it in a from scratch dockerfile
+      run: CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w' 
 
     - name: Test
       run: go test -v .
