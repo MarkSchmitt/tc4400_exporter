@@ -44,11 +44,11 @@ jobs:
 
         export DOCKER_CLI_EXPERIMENTAL=enabled 
         export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
-        docker manifest create ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-amd64 ${DOCKER_REPO}:${{ github.sha }}-arm64v8 ${DOCKER_REPO}:${{ github.sha }}-arm32
-        docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
-        docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
-        docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
-        docker manifest push --purge ${DOCKER_REPO}:${{ github.sha }}
+        docker manifest create ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-amd64 ${REPO}:${{ github.sha }}-arm64v8 ${REPO}:${{ github.sha }}-arm32
+        docker manifest annotate ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
+        docker manifest annotate ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
+        docker manifest annotate ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
+        docker manifest push --purge ${REPO}:${{ github.sha }}
         if [ "$REF" = "master" ]; then
           DOCKER_TAG="latest"
         else
@@ -57,9 +57,9 @@ jobs:
           fi
             DOCKER_TAG=$REF
         fi
-        docker manifest create ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-amd64 ${DOCKER_REPO}:${{ github.sha }}-arm64v8 ${DOCKER_REPO}:${{ github.sha }}-arm32
-        docker manifest annotate ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
-        docker manifest annotate ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
-        docker manifest annotate ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
-        docker manifest push --purge ${DOCKER_REPO}:${DOCKER_TAG}
+        docker manifest create ${REPO}:${DOCKER_TAG} ${REPO}:${{ github.sha }}-amd64 ${REPO}:${{ github.sha }}-arm64v8 ${REPO}:${{ github.sha }}-arm32
+        docker manifest annotate ${REPO}:${DOCKER_TAG} ${REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
+        docker manifest annotate ${REPO}:${DOCKER_TAG} ${REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
+        docker manifest annotate ${REPO}:${DOCKER_TAG} ${REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
+        docker manifest push --purge ${REPO}:${DOCKER_TAG}
 
