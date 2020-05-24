@@ -35,7 +35,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: moztr/tc4400_exporter
-        tags: ${GITHUB_SHA}-amd64
+        tags: ${{ github.sha }}-amd64
 
     - name: Build arm64
     # Build statically linked so we can use it in a from scratch dockerfile
