@@ -44,10 +44,9 @@ jobs:
       run: CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -tags netgo -ldflags '-w' 
 
     - name: Build and Push Docker arm64
-      uses: docker/build-push-action@v1
-      with:
-        repository: docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
-        tags: ${{ github.sha }}-arm64v8
+      run: |
+        docker build -t ${REPO}:${{ github.sha }}-arm64v8 .
+        docker push ${REPO}:${{ github.sha }}-arm64v8
 
     - name: Build arm
     # Build statically linked so we can use it in a from scratch dockerfile
