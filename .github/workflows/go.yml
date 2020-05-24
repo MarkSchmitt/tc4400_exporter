@@ -33,6 +33,7 @@ jobs:
 
     - name: Build and Push Docker amd64
       run: |
+        docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
         docker build -t docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter:${{ github.sha }}-amd64 .
         docker push docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter:${{ github.sha }}-amd64
 
