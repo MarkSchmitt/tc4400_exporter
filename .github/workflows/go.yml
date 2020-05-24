@@ -34,8 +34,6 @@ jobs:
     - name: Build and Push Docker amd64
       uses: docker/build-push-action@v1
       with:
-        username: MarkSchmitt
-        password: ${{ secrets.GITHUB_TOKEN }}
         repository: docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
         tags: ${{ github.sha }}-amd64
 
@@ -46,8 +44,6 @@ jobs:
     - name: Build and Push Docker arm64
       uses: docker/build-push-action@v1
       with:
-        username: MarkSchmitt
-        password: ${{ secrets.GITHUB_TOKEN }}
         repository: docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
         tags: ${{ github.sha }}-arm64v8
 
@@ -58,8 +54,6 @@ jobs:
     - name: Build and Push Docker arm
       uses: docker/build-push-action@v1
       with:
-        username: MarkSchmitt
-        password: ${{ secrets.GITHUB_TOKEN }}
         repository: docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
         tags: ${{ github.sha }}-arm32
 
@@ -68,7 +62,6 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled 
           export DOCKER_REPO=docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
           export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u MarkSchmitt --password-stdin
           docker manifest create ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-amd64 ${DOCKER_REPO}:${{ github.sha }}-arm64v8 ${DOCKER_REPO}:${{ github.sha }}-arm32
           docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
           docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
