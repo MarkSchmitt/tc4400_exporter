@@ -32,23 +32,23 @@ jobs:
       run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' 
 
     - name: Build and Push Docker amd64
-      run: |
-          export DOCKER_CLI_EXPERIMENTAL=enabled 
-          export DOCKER_REPO=docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
-          export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
-          cat ~/TOKEN.txt | docker login https://docker.pkg.github.com -u markschmitt --password-stdin
-          docker build -t ${DOCKER_REPO}:${{ github.sha }}-amd64 .
-          docker push ${DOCKER_REPO}:${{ github.sha }}-amd64
+      uses: docker/build-push-action@v1
+      with:
+        username: MarkSchmitt
+        password: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
+        repository: docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
+        tags: ${{ github.sha }}-amd64
 
     - name: Build arm64
     # Build statically linked so we can use it in a from scratch dockerfile
       run: CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -tags netgo -ldflags '-w' 
 
     - name: Build and Push Docker arm64
+      run:
       uses: docker/build-push-action@v1
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        username: MarkSchmitt
+        password: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
         repository: docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
         tags: ${{ github.sha }}-arm64v8
 
@@ -59,8 +59,8 @@ jobs:
     - name: Build and Push Docker arm
       uses: docker/build-push-action@v1
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        username: MarkSchmitt
+        password: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
         repository: docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
         tags: ${{ github.sha }}-arm32
 
@@ -69,7 +69,7 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled 
           export DOCKER_REPO=docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
           export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
-          cat ~/TOKEN.txt | docker login https://docker.pkg.github.com -u markschmitt --password-stdin
+          echo ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }} | docker login docker.pkg.github.com -u MarkSchmitt --password-stdin
           docker manifest create ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-amd64 ${DOCKER_REPO}:${{ github.sha }}-arm64v8 ${DOCKER_REPO}:${{ github.sha }}-arm32
           docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
           docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
