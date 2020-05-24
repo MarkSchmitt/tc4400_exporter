@@ -35,7 +35,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: moztr/tc4400_exporter
-        tags: ${{ GITHUB_SHA }}-amd64
+        tags: ${GITHUB_SHA}-amd64
 
     - name: Build arm64
     # Build statically linked so we can use it in a from scratch dockerfile
@@ -47,7 +47,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: moztr/tc4400_exporter
-        tags: ${{ GITHUB_SHA }}-arm64v8
+        tags: ${GITHUB_SHA}-arm64v8
 
     - name: Build arm
     # Build statically linked so we can use it in a from scratch dockerfile
@@ -59,14 +59,14 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: moztr/tc4400_exporter
-        tags: ${{ GITHUB_SHA }}-arm32
+        tags: ${GITHUB_SHA}-arm32
 
     - name: Multi Arch manifest
       run: 
         - export DOCKER_CLI_EXPERIMENTAL=enabled 
         - echo ${{ secrets.DOCKER_USERNAME }} | docker login -u ${{ secrets.DOCKER_PASSWORD }} --password-stdin
-        - docker manifest create moztr/tc4400_exporter:${{ GITHUB_SHA }} moztr/tc4400_exporter:${{ GITHUB_SHA }}-amd64 moztr/tc4400_exporter:${{ GITHUB_SHA }}-arm64v8 moztr/tc4400_exporter:${{ GITHUB_SHA }}-arm32
-        - docker manifest annotate moztr/tc4400_exporter:${{ GITHUB_SHA }} moztr/tc4400_exporter:${{ GITHUB_SHA }}-arm32 --os linux --arch arm --variant v6
-        - docker manifest annotate moztr/tc4400_exporter:${{ GITHUB_SHA }} moztr/tc4400_exporter:${{ GITHUB_SHA }}-arm32 --os linux --arch arm --variant v7
-        - docker manifest annotate moztr/tc4400_exporter:${{ GITHUB_SHA }} moztr/tc4400_exporter:${{ GITHUB_SHA }}-arm64v8 --os linux --arch arm64 --variant v8
-        - docker manifest push --purge moztr/tc4400_exporter:${{ GITHUB_SHA }}
+        - docker manifest create moztr/tc4400_exporter:${GITHUB_SHA} moztr/tc4400_exporter:${GITHUB_SHA}-amd64 moztr/tc4400_exporter:${GITHUB_SHA}-arm64v8 moztr/tc4400_exporter:${GITHUB_SHA}-arm32
+        - docker manifest annotate moztr/tc4400_exporter:${GITHUB_SHA} moztr/tc4400_exporter:${GITHUB_SHA}-arm32 --os linux --arch arm --variant v6
+        - docker manifest annotate moztr/tc4400_exporter:${GITHUB_SHA} moztr/tc4400_exporter:${GITHUB_SHA}-arm32 --os linux --arch arm --variant v7
+        - docker manifest annotate moztr/tc4400_exporter:${GITHUB_SHA} moztr/tc4400_exporter:${GITHUB_SHA}-arm64v8 --os linux --arch arm64 --variant v8
+        - docker manifest push --purge moztr/tc4400_exporter:${GITHUB_SHA}
