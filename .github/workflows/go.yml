@@ -29,6 +29,7 @@ jobs:
 
     - name: Build and Push Docker Images
       run: |
+        set -x
         export OWNER=$(echo ${{ github.repository }} | sed 's#/.*##')
         export REPO=$(echo "docker.pkg.github.com/${{ github.repository }}/prometheus_exporter" | sed -e 's/\(.*\)/\L\1/')
         docker login docker.pkg.github.com -u ${OWNER} -p ${{ secrets.GITHUB_TOKEN }}
@@ -44,8 +45,7 @@ jobs:
 
         export DOCKER_CLI_EXPERIMENTAL=enabled 
         export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
-        echo docker manifest create ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-amd64 ${REPO}:${{ github.sha }}-arm64v8 ${REPO}:${{ github.sha }}-arm32
-        abc
+        docker manifest create ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-amd64 ${REPO}:${{ github.sha }}-arm64v8 ${REPO}:${{ github.sha }}-arm32
         docker manifest annotate ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
         docker manifest annotate ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
         docker manifest annotate ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
