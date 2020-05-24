@@ -27,58 +27,39 @@ jobs:
     - name: Test
       run: go test -v .
 
-    - name: Build amd64
-    # Build statically linked so we can use it in a from scratch dockerfile
-      run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' 
-
-    - name: Build and Push Docker amd64
+    - name: Build and Push Docker Images
       run: |
         export OWNER=$(echo ${{ github.repository }} | sed 's#/.*##')
         export REPO=$(echo "docker.pkg.github.com/${{ github.repository }}/prometheus_exporter" | sed -e 's/\(.*\)/\L\1/')
         docker login docker.pkg.github.com -u ${OWNER} -p ${{ secrets.GITHUB_TOKEN }}
+        CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' 
         docker build -t ${REPO}:${{ github.sha }}-amd64 .
         docker push ${REPO}:${{ github.sha }}-amd64
-
-    - name: Build arm64
-    # Build statically linked so we can use it in a from scratch dockerfile
-      run: CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -tags netgo -ldflags '-w' 
-
-    - name: Build and Push Docker arm64
-      run: |
+        CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -tags netgo -ldflags '-w' 
         docker build -t ${REPO}:${{ github.sha }}-arm64v8 .
         docker push ${REPO}:${{ github.sha }}-arm64v8
+        CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -a -tags netgo -ldflags '-w' 
+        docker build -t ${REPO}:${{ github.sha }}-arm32 .
+        docker push ${REPO}:${{ github.sha }}-arm32
 
-    - name: Build arm
-    # Build statically linked so we can use it in a from scratch dockerfile
-      run: CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -a -tags netgo -ldflags '-w' 
-
-    - name: Build and Push Docker arm
-      uses: docker/build-push-action@v1
-      with:
-        repository: docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
-        tags: ${{ github.sha }}-arm32
-
-    - name: Multi Arch manifest
-      run: |
-          export DOCKER_CLI_EXPERIMENTAL=enabled 
-          export DOCKER_REPO=docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
-          export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
-          docker manifest create ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-amd64 ${DOCKER_REPO}:${{ github.sha }}-arm64v8 ${DOCKER_REPO}:${{ github.sha }}-arm32
-          docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
-          docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
-          docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
-          docker manifest push --purge ${DOCKER_REPO}:${{ github.sha }}
-          if [ "$REF" = "master" ]; then
-            DOCKER_TAG="latest"
-          else
-            if [ "$REF" = "" ]; then
-              return
-            fi
-              DOCKER_TAG=$REF
+        export DOCKER_CLI_EXPERIMENTAL=enabled 
+        export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
+        docker manifest create ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-amd64 ${DOCKER_REPO}:${{ github.sha }}-arm64v8 ${DOCKER_REPO}:${{ github.sha }}-arm32
+        docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
+        docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
+        docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
+        docker manifest push --purge ${DOCKER_REPO}:${{ github.sha }}
+        if [ "$REF" = "master" ]; then
+          DOCKER_TAG="latest"
+        else
+          if [ "$REF" = "" ]; then
+            return
           fi
-          docker manifest create ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-amd64 ${DOCKER_REPO}:${{ github.sha }}-arm64v8 ${DOCKER_REPO}:${{ github.sha }}-arm32
-          docker manifest annotate ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
-          docker manifest annotate ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
-          docker manifest annotate ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
-          docker manifest push --purge ${DOCKER_REPO}:${DOCKER_TAG}
+            DOCKER_TAG=$REF
+        fi
+        docker manifest create ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-amd64 ${DOCKER_REPO}:${{ github.sha }}-arm64v8 ${DOCKER_REPO}:${{ github.sha }}-arm32
+        docker manifest annotate ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
+        docker manifest annotate ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
+        docker manifest annotate ${DOCKER_REPO}:${DOCKER_TAG} ${DOCKER_REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
+        docker manifest push --purge ${DOCKER_REPO}:${DOCKER_TAG}
 
