@@ -33,9 +33,10 @@ jobs:
 
     - name: Build and Push Docker amd64
       run: |
-        docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-        docker build -t docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter:${{ github.sha }}-amd64 .
-        docker push docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter:${{ github.sha }}-amd64
+        export OWNER=$(echo ${{ github.repository }} | sed 's#/.*##')
+        docker login docker.pkg.github.com -u ${OWNER} -p ${{ secrets.GITHUB_TOKEN }}
+        docker build -t docker.pkg.github.com/${{ github.repository }}/prometheus_exporter:${{ github.sha }}-amd64 .
+        docker push docker.pkg.github.com/${{ github.repository }}/prometheus_exporter:${{ github.sha }}-amd64
 
     - name: Build arm64
     # Build statically linked so we can use it in a from scratch dockerfile
