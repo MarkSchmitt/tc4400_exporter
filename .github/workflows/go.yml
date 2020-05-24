@@ -34,9 +34,10 @@ jobs:
     - name: Build and Push Docker amd64
       run: |
         export OWNER=$(echo ${{ github.repository }} | sed 's#/.*##')
+        export REPO=$(echo "docker.pkg.github.com/${{ github.repository }}/prometheus_exporter" | sed -e 's/\(.*\)/\L\1/')
         docker login docker.pkg.github.com -u ${OWNER} -p ${{ secrets.GITHUB_TOKEN }}
-        docker build -t docker.pkg.github.com/${{ github.repository }}/prometheus_exporter:${{ github.sha }}-amd64 .
-        docker push docker.pkg.github.com/${{ github.repository }}/prometheus_exporter:${{ github.sha }}-amd64
+        docker build -t ${REPO}:${{ github.sha }}-amd64 .
+        docker push ${REPO}:${{ github.sha }}-amd64
 
     - name: Build arm64
     # Build statically linked so we can use it in a from scratch dockerfile
