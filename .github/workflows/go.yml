@@ -36,7 +36,7 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled 
           export DOCKER_REPO=docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
           export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
-          cat ~/TOKEN.txt | docker login https://docker.pkg.github.com -u markschmitt --password-stdin
+          cat ~/GH_TOKEN.txt | docker login https://docker.pkg.github.com -u markschmitt --password-stdin
           docker build -t ${DOCKER_REPO}:${{ github.sha }}-amd64 .
           docker push ${DOCKER_REPO}:${{ github.sha }}-amd64
 
@@ -69,7 +69,7 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled 
           export DOCKER_REPO=docker.pkg.github.com/markschmitt/tc4400_exporter/prometheus_exporter
           export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
-          cat ~/TOKEN.txt | docker login https://docker.pkg.github.com -u markschmitt --password-stdin
+          cat ~/GH_TOKEN.txt | docker login https://docker.pkg.github.com -u markschmitt --password-stdin
           docker manifest create ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-amd64 ${DOCKER_REPO}:${{ github.sha }}-arm64v8 ${DOCKER_REPO}:${{ github.sha }}-arm32
           docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
           docker manifest annotate ${DOCKER_REPO}:${{ github.sha }} ${DOCKER_REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
