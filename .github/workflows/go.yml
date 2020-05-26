@@ -44,8 +44,7 @@ jobs:
 
         export DOCKER_CLI_EXPERIMENTAL=enabled 
         export REF=$(echo ${{ github.ref }} | sed 's#refs/.*/##')
-        echo docker manifest create ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-amd64 ${REPO}:${{ github.sha }}-arm64v8 ${REPO}:${{ github.sha }}-arm32
-        abc
+        docker manifest create ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-amd64 ${REPO}:${{ github.sha }}-arm64v8 ${REPO}:${{ github.sha }}-arm32
         docker manifest annotate ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v6
         docker manifest annotate ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-arm32 --os linux --arch arm --variant v7
         docker manifest annotate ${REPO}:${{ github.sha }} ${REPO}:${{ github.sha }}-arm64v8 --os linux --arch arm64 --variant v8
