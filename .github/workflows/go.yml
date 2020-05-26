@@ -45,6 +45,7 @@ jobs:
       run: CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -tags netgo -ldflags '-w' 
 
     - name: Build and Push Docker arm64
+      run:
       uses: docker/build-push-action@v1
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
