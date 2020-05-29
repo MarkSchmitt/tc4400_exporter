@@ -11,8 +11,9 @@ on:
 jobs:
 
   build:
-    name: Build
+    name: Build and push docker
     runs-on: ubuntu-latest
+    if: ${{ secrets.BUILD_DOCKER == '1' }}
     steps:
 
     - name: Set up Go 1.x
@@ -37,7 +38,6 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: ${{ secrets.DOCKER_REPO }}
-        if: ${{ secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD && secrets.DOCKER_REPO }}
         tags: ${{ github.sha }}-amd64
 
     - name: Build arm64
@@ -50,7 +50,6 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: ${{ secrets.DOCKER_REPO }}
-        if: ${{ secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD && secrets.DOCKER_REPO }}
         tags: ${{ github.sha }}-arm64v8
 
     - name: Build arm
@@ -63,7 +62,6 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: ${{ secrets.DOCKER_REPO }}
-        if: ${{ secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD && secrets.DOCKER_REPO }}
         tags: ${{ github.sha }}-arm32
 
     - name: Multi Arch manifest
