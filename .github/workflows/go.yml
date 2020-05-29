@@ -35,7 +35,7 @@ jobs:
         DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
         BUILD_DOCKER: ${{ secrets.BUILD_DOCKER }}
       run: |
-          if [ -z "$BUILD_DOCKER" ]; then echo "BUILD_DOCKER is not set, returning"; return; fi;
+          if [ -z "$BUILD_DOCKER" ]; then echo "BUILD_DOCKER is not set, returning"; exit 0; fi;
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' 
           docker build -t $DOCKER_REPO:${{ github.sha }}-amd64 .
