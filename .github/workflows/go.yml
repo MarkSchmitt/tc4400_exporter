@@ -13,7 +13,7 @@ jobs:
   build:
     name: Build and push docker
     runs-on: ubuntu-latest
-    if: ${{ secrets.BUILD_DOCKER == '1' }}
+    if: secrets.BUILD_DOCKER == '1'
     steps:
 
     - name: Set up Go 1.x
