@@ -67,8 +67,7 @@ jobs:
         tags: ${{ github.sha }}-arm32
 
     - name: Multi Arch manifest
-      with:
-        if: ${{ secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD && secrets.DOCKER_REPO }}
+      if: ${{ secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD && secrets.DOCKER_REPO }}
       run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled 
           export DOCKER_REPO=${{ secrets.DOCKER_REPO }}
